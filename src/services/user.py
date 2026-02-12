@@ -1,11 +1,10 @@
-from fastapi import Depends
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 import src.utils.security as security
 from src.models.user import UserModel
-from src.db.database import get_session
 from src.schemas.user import UserRegister, UserLogin, UserOut
 from src.schemas.token import Token
-from sqlalchemy.ext.asyncio import AsyncSession
+from src.api.deps import SessionDep
 from src.core.exceptions import (
     UserAlreadyExistsError,
     UserNotFoundError,
@@ -67,7 +66,5 @@ class UserService:
         return result
 
 
-async def get_user_service(
-    db_session: AsyncSession = Depends(get_session),
-) -> UserService:
+def get_user_service(db_session: SessionDep) -> UserService:
     return UserService(db_session)
